@@ -1,22 +1,45 @@
 import Layout from "@/components/Layout";
-import { Container, Heading, Text } from "@chakra-ui/react";
+import { Center, Container, Heading, Spinner, Text } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function Detail() {
+  const router = useRouter();
+  const { id } = router.query;
+  const [note, setNote] = useState(null);
+
+  useEffect(() => {
+    if (id) {
+      fetch(`/api/notes/${id}`)
+        .then((response) => response.json())
+        .then((data) => setNote(data));
+    }
+  }, [id]);
+
   return (
-    <Layout title="Detail Catatan">
+    <Layout title={note?.title || ""}>
       <Container py={2} maxW="container.sm">
-        <Heading size="xl"> Customer dashboard</Heading>
+        {!note ? (
+          <Center>
+            <Spinner />
+          </Center>
+        ) : (
+          <>
+            <Heading size="xl">{note.title}</Heading>
 
-        <Text fontSize={"lg"} py={6}>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio, tempore
-          ex rem beatae nobis possimus veritatis? Minus, nam tempora eos ea
-          laborum veniam obcaecati quidem iusto ullam accusantium! Officiis,
-          accusamus.
-        </Text>
+            <Text fontSize={"lg"} py={6}>
+              {note.body}
+            </Text>
 
-        <Text fontSize={"sm"} color={"gray"}>
-          10/10/10
-        </Text>
+            <Text fontSize={"sm"} color={"gray"}>
+              {new Date(note.createdAt).toLocaleDateString("id-ID", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
+            </Text>
+          </>
+        )}
       </Container>
     </Layout>
   );

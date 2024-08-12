@@ -13,7 +13,7 @@ import DeleteDialog from "./DeleteDialog";
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 
-export default function CardNote() {
+export default function CardNote({ note, onDeleteSuccess }) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
@@ -22,16 +22,11 @@ export default function CardNote() {
     <>
       <Card>
         <CardHeader>
-          <Heading size="md"> Customer dashboard</Heading>
+          <Heading size="md">{note.title}</Heading>
         </CardHeader>
 
         <CardBody py={0}>
-          <Text>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio,
-            tempore ex rem beatae nobis possimus veritatis? Minus, nam tempora
-            eos ea laborum veniam obcaecati quidem iusto ullam accusantium!
-            Officiis, accusamus.
-          </Text>
+          <Text>{note.body}</Text>
         </CardBody>
 
         <CardFooter gap={2} justify={"end"}>
@@ -39,13 +34,13 @@ export default function CardNote() {
             colorScheme="blue"
             aria-label="Lihat Detail"
             icon={<ViewIcon />}
-            onClick={() => router.push("/detail/1")}
+            onClick={() => router.push(`/detail/${note.id}`)}
           />
           <IconButton
             colorScheme="yellow"
             aria-label="Edit"
             icon={<EditIcon />}
-            onClick={() => router.push("/edit/1")}
+            onClick={() => router.push(`/edit/${note.id}`)}
           />
           <IconButton
             colorScheme="red"
@@ -56,7 +51,13 @@ export default function CardNote() {
         </CardFooter>
       </Card>
 
-      <DeleteDialog isOpen={isOpen} cancelRef={cancelRef} onClose={onClose} />
+      <DeleteDialog
+        isOpen={isOpen}
+        cancelRef={cancelRef}
+        onClose={onClose}
+        note={note}
+        onDeleteSuccess={onDeleteSuccess}
+      />
     </>
   );
 }
